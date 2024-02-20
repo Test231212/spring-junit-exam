@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -16,6 +17,39 @@ public class BoardRepositoryTest {
 
     @Autowired // Test에서 DI 하는 코드
     private BoardRepository boardRepository;
+
+    @Test
+    public void deleteById_test(){
+            // given
+            int deleteId= 1;
+
+            // when
+            boardRepository.deleteById(deleteId);
+
+            // then
+            Board board = boardRepository.selectOne(deleteId);
+            Assertions.assertThat(board).isNull();
+    }
+
+    @Test
+    public void update_test(){
+        // given
+        int uId = 1;
+
+        String nTitle = "제목100";
+        String nContent = "내용100";
+        String nAuthor = "이순신100";
+
+        // when
+        boardRepository.update(nTitle, nContent, nAuthor);
+
+        // then
+        Board uBoard = boardRepository.selectOne(uId);
+
+        Assertions.assertThat(uBoard.getTitle()).isEqualTo(nTitle);
+        Assertions.assertThat(uBoard.getContent()).isEqualTo(nContent);
+        Assertions.assertThat(uBoard.getAuthor()).isEqualTo(nAuthor);
+    }
 
     @Test
     public void selectAll_test(){
